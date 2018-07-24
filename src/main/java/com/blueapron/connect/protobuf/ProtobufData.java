@@ -106,6 +106,7 @@ class ProtobufData {
 
   private Schema toConnectSchema(Message message) {
     final SchemaBuilder builder = SchemaBuilder.struct();
+    builder.name(message.getClass().getCanonicalName());
     final List<Descriptors.FieldDescriptor> fieldDescriptorList = message.getDescriptorForType().getFields();
     for (Descriptors.FieldDescriptor descriptor : fieldDescriptorList) {
       builder.field(getConnectFieldName(descriptor), toConnectSchema(descriptor));
@@ -201,7 +202,9 @@ class ProtobufData {
         throw new DataException("Unknown Connect schema type: " + descriptor.getType());
     }
 
+    builder.name(descriptor.getName());
     builder.optional();
+
     Schema schema = builder.build();
 
     if (descriptor.isRepeated()) {
